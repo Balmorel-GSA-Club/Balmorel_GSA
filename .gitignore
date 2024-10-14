@@ -1,0 +1,11 @@
+*.gdx
+*.g00
+/output
+/scenario_data
+**/output_file*.txt
+/model/[0-9]*
+*.lst
+*.gsp
+**/__pycache__/
+/model/input_params.csv
+/model/%batfileMERGEWITHBASE%
