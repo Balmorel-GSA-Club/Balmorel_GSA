@@ -118,4 +118,4 @@ $ifi not dexist "../output/temp"         execute 'mkdir -p "../output/temp"';
 $ifi %BB4%==yes $ifi     exist 'Balmorelbb4_ReadData.inc'  $include  'Balmorelbb4_ReadData.inc';
 $ifi %BB4%==yes $ifi not exist 'Balmorelbb4_ReadData.inc'  $include  '../../base/model/Balmorelbb4_ReadData.inc';
 
-execute_unload 'base_input_data.gdx', %params%;
+execute_unload '../scenario_data/input_data/input_data_baseline.gdx', %params%;

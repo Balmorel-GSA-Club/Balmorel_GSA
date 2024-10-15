@@ -5,8 +5,8 @@ $offMulti
 GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
 FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
 
-$ifi %BB4%==yes $ifi     exist 'Balmorelbb4.inc'  $include  'Balmorelbb4_finish.inc';
-$ifi %BB4%==yes $ifi not exist 'Balmorelbb4.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
+$ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
+$ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
 
 execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' PRO_YCRAGF
 $ontext

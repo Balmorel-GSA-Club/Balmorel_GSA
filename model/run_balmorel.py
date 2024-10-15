@@ -9,7 +9,7 @@ import pandas as pd
 
 def run_scenario(index, sample):
     print("Running scenario {}".format(index+1))
-    base_data = Container(load_from="./base_input_data.gdx")
+    base_data = Container(load_from="../scenario_data/input_data/input_data_baseline.gdx")
     scenario_data = copy(base_data)
 
     EMI_POL = scenario_data["EMI_POL"].records
@@ -51,7 +51,7 @@ def run_scenario(index, sample):
     XKRATE.loc[:,"value"] = sample["E_T_AVAIL"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
-    os.system("gams ./Balmorel_finish.gms --id={0} r=s1 > output_file_scenario_{0}.txt".format(index+1))
+    os.system("gams ./Balmorel_finish.gms --id={0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
     if not os.path.isdir("../scenario_data"):
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     sampler.sample()
     samples=pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
-    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
 
     tic = time.time()
     #pool = mp.Pool(processes=mp.cpu_count()-1)
