@@ -1,6 +1,22 @@
-# Balmorel_GSA
-Repository containing the GSA code for Balmorel
+# Balmorel GSA
 
-# Usage
+## Purpose
 
-Clone the repository to the same level as your Balmorel base folder you want to use
+(...)
+
+## Requirements
+
+(dependencies and their versions or version ranges)
+
+## Installation instructions
+
+(...)
+
+
+## Example
+
+## Documentation
+
+## License
+
+See [LICENSE](LICENSE) 
