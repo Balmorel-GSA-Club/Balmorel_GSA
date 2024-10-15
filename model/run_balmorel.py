@@ -59,9 +59,9 @@ if __name__ == '__main__':
         os.makedirs("../scenario_data/log_files")
         os.makedirs("../scenario_data/input_data")
         os.makedirs("../scenario_data/output_data")
-    sampler=morris_sampler(input="input_params.csv", N=1)
+    sampler = morris_sampler(input="input_params.csv", N=1)
     sampler.sample()
-    samples=pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
+    samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     pool.close()
     pool.join()
 
-    merge_cmd="gdxmerge"
+    merge_cmd = "gdxmerge"
     for id in range(len(samples)):
         merge_cmd += " ../scenario_data/output_data/ScenarioResults_{}.gdx".format(id+1)
     os.system(merge_cmd)
