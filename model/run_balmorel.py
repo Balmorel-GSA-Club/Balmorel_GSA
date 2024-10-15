@@ -54,6 +54,11 @@ def run_scenario(index, sample):
     os.system("gams ./Balmorel_finish.gms --id={0} r=s1 > output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
+    if not os.path.isdir("../scenario_data"):
+        os.makedirs("../scenario_data")
+        os.makedirs("../scenario_data/log_files")
+        os.makedirs("../scenario_data/input_data")
+        os.makedirs("../scenario_data/output_data")
     sampler=morris_sampler(input="input_params.csv", N=1)
     sampler.sample()
     samples=pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
