@@ -58,11 +58,11 @@ if __name__ == '__main__':
     sampler.sample()
     samples=pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
-    #os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > output_file_baseline.txt'.format(sets))
 
     tic = time.time()
-    #pool = mp.Pool(processes=mp.cpu_count()-1)
-    pool = mp.Pool(processes=4)
+    pool = mp.Pool(processes=mp.cpu_count()-1)
+    #pool = mp.Pool(processes=4)
     results = pool.starmap_async(run_scenario, [(index, sample) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
