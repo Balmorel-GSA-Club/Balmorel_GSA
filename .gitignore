@@ -1,6 +1,7 @@
 *.gdx
 *.g00
 /output
+/logerror
 /scenario_data
 **/output_file*.txt
 /model/[0-9]*
