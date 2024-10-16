@@ -2275,7 +2275,7 @@ $ifi not exist 'Balmorelbb4.sim'  $include '../../base/model/Balmorelbb4.sim';
 
 
 *-------------------------------------------------------------------------------
-
+$ontext
 *--- Main results calculation -----------------------------------------------
 $ifi %OUTPUT_SUMMARY%==yes $if     EXIST '../../base/output/OUTPUT_SUMMARY.inc' $INCLUDE         '../../base/output/OUTPUT_SUMMARY.inc';
 *--- End of Main results calculation ---------------------------------------
@@ -2564,5 +2564,6 @@ $label  result_export
 
 
 DISPLAY INFODISPLAY , "For BB4: see at the end of the logfile: <case>/logerror/logfile.out." ;
+$offtext
 *----- End of file:------------------------------------------------------------
 $label endoffile

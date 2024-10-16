@@ -51,7 +51,7 @@ def run_scenario(index, sample):
     XKRATE.loc[:,"value"] = sample["E_T_AVAIL"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
-    os.system("gams ./Balmorel_finish.gms --id={0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
+    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
     if not os.path.isdir("../scenario_data"):
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-
+    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     tic = time.time()
     #pool = mp.Pool(processes=mp.cpu_count()-1)
     pool = mp.Pool(processes=4)
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     merge_cmd = "gdxmerge"
     for id in range(len(samples)):
-        merge_cmd += " ../scenario_data/output_data/ScenarioResults_{}.gdx".format(id+1)
+        merge_cmd += " ../scenario_data/output_data/Results_scenario_{}.gdx".format(id+1)
     os.system(merge_cmd)
     tac = time.time()
     time_trajectory = tac-tic

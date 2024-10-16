@@ -1,5 +1,5 @@
 $onMultiR
-$gdxLoadAll '../scenario_data/input_data/input_data_scenario_%id%.gdx';
+$gdxLoadAll '../scenario_data/input_data/input_data_%id%.gdx';
 $offMulti
 
 GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
@@ -8,7 +8,12 @@ FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDAT
 $ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
 $ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
 
-execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' PRO_YCRAGF
+*--- Main results calculation -----------------------------------------------
+$ifi %OUTPUT_SUMMARY%==yes $ifi     exist 'OUTPUT_SUMMARY.inc' $include         'OUTPUT_SUMMARY.inc';
+$ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
+*--- End of Main results calculation ---------------------------------------
+
+*execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' PRO_YCRAGF
 $ontext
 $ifi %BB4%==yes $goto ENDOFMODEL
 *-------------------------------------------------------------------------------
