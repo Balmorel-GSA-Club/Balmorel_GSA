@@ -1,5 +1,6 @@
 *.gdx
 *.g00
+samples.txt
 /output
 /logerror
 /scenario_data

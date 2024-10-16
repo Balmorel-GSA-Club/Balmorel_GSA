@@ -59,8 +59,9 @@ if __name__ == '__main__':
         os.makedirs("../scenario_data/log_files")
         os.makedirs("../scenario_data/input_data")
         os.makedirs("../scenario_data/output_data")
-    sampler = morris_sampler(input="input_params.csv", N=1)
+    sampler = morris_sampler(input="input_params.csv", N=1, rng=42)
     sampler.sample()
+    sampler.save_samples("samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
