@@ -11,3 +11,4 @@ samples.txt
 **/__pycache__/
 /model/input_params.csv
 /model/%batfileMERGEWITHBASE%
+/GSA_env
