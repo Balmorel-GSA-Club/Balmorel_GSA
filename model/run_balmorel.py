@@ -20,6 +20,7 @@ def run_scenario(index, sample):
     base_data = Container(load_from="../scenario_data/input_data/input_data_baseline.gdx")
     scenario_data = copy(base_data)
 
+
     EMI_POL = scenario_data["EMI_POL"].records
     EMI_POL.loc[(EMI_POL["CCCRRRAAA"]=="DENMARK") & (EMI_POL["GROUP"]=="ALL_SECTORS") & (EMI_POL["EMIPOLSET"]=="TAX_CO2"), "value"]=sample["CO2_TAX"]
     
@@ -59,7 +60,7 @@ def run_scenario(index, sample):
     XKRATE.loc[:,"value"] = sample["E_T_AVAIL"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
-    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
+    os.system("gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
     if not os.path.isdir("../scenario_data"):
@@ -76,11 +77,11 @@ if __name__ == '__main__':
     sampler.save_samples("samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
-    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    os.system('gams ./Balmorel_ReadData.gms license=/work3/s233235/gamslice.txt --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     tic = time.time()
-    #pool = mp.Pool(processes=mp.cpu_count()-1)
-    pool = mp.Pool(processes=4)
+    pool = mp.Pool(processes=mp.cpu_count()-1)
+    # pool = mp.Pool(processes=4)
     results = pool.starmap_async(run_scenario, [(index, sample) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
