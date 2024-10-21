@@ -1,11 +1,19 @@
 from gamspy import Container
 import os
+import argparse
 import multiprocessing as mp
 from datetime import timedelta
 import time 
 from copy import copy
-from create_samples import morris_sampler
+from create_samples import lhc_sampler
 import pandas as pd
+
+def get_arg():
+    parser = argparse.ArgumentParser(description="Process some arguments.")
+    parser.add_argument('--nb_scen', type=int, help='Number of scenarios (integer)')
+    parser.add_argument('--input_sample', type=str, help='Name of the input sampling csv file (str)')
+    args = parser.parse_args()
+    return args.nb_scen, args.input_sample
 
 def run_scenario(index, sample):
     print("Running scenario {}".format(index+1))
@@ -59,7 +67,11 @@ if __name__ == '__main__':
         os.makedirs("../scenario_data/log_files")
         os.makedirs("../scenario_data/input_data")
         os.makedirs("../scenario_data/output_data")
-    sampler = morris_sampler(input="input_params.csv", N=1, rng=42)
+        
+    # Arguments
+    num_scen, input_file = get_arg()
+    
+    sampler = lhc_sampler(input=input_file, N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
