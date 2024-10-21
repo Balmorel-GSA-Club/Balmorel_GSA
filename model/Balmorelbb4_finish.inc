@@ -718,7 +718,7 @@ $label  Transmission_investments_end
 *-------------------------------------------------------------------------------
 * End: Internal parameters and settings
 *-------------------------------------------------------------------------------
-if (%id%=="baseline",
+
 *-------------------------------------------------------------------------------
 * Possibly write input data. Prepare output file possibilities:
 *-------------------------------------------------------------------------------
@@ -759,7 +759,7 @@ $ifi %INPUTDATAGDX2MDB%==yes execute '=GDX2ACCESS "%relpathInputdata2GDX%INPUTDA
 * End: Possibly write input data, prepare output file possibilities
 *-------------------------------------------------------------------------------
 *-------------------------------------------------------------------------------
-);
+
 * A number of input data IDs contain more information than is actually used with the set-up of the model.
 * To reduce use of memory space and to reduce further processing and storage of unused data
 * some of the larger data IDs are here reduced by resetting unused data items to default values.
@@ -2241,11 +2241,10 @@ QOBJ.SCALE=IOF1000000;
 $include "../../base/addons/_hooks/error2.inc"
 $INCLUDE  "../../base/addons/BB4/errorBB4.inc";
 
-if (%id%=="baseline",
 * The following file contains definitions of a number of temporary parameters
 * and sets that may be used for printout of simulation results.
 $ifi %PRINTFILES%==yes $INCLUDE "../../base/output/printout/printinc/print2.inc";
-);
+
 * The following file contains file and parameter definitions for the economic
 * output module.
 $ifi %ECONOMIC%==yes $INCLUDE "../../base/processing/economic/eco_def.inc";
