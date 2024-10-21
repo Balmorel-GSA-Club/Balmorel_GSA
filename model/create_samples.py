@@ -133,7 +133,7 @@ class lhc_sampler:
         self.problem = {
         'num_vars': len(self.input["Parameter"]),
         'names': [name for name in self.input["Parameter"]],
-        'bounds': [[lower, upper] for lower, upper in zip(self.input["Lower_bound"], self.input["Upper_bound"])],
+        'bounds': [[lower, upper, (lower+upper)/2, (upper-lower)/6] for lower, upper in zip(self.input["Lower_bound"], self.input["Upper_bound"])],
         'dists': [dist for dist in self.input["Distribution_type"]]}
 
     def sample(self):

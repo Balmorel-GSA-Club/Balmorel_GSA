@@ -1,16 +1,25 @@
 from gamspy import Container
 import os
+import argparse
 import multiprocessing as mp
 from datetime import timedelta
 import time 
 from copy import copy
-from create_samples import morris_sampler
+from create_samples import lhc_sampler
 import pandas as pd
+
+def get_arg():
+    parser = argparse.ArgumentParser(description="Process some arguments.")
+    parser.add_argument('--nb_scen', type=int, help='Number of scenarios (integer)')
+    parser.add_argument('--input_sample', type=str, help='Name of the input sampling csv file (str)')
+    args = parser.parse_args()
+    return args.nb_scen, args.input_sample
 
 def run_scenario(index, sample):
     print("Running scenario {}".format(index+1))
     base_data = Container(load_from="../scenario_data/input_data/input_data_baseline.gdx")
     scenario_data = copy(base_data)
+
 
     EMI_POL = scenario_data["EMI_POL"].records
     EMI_POL.loc[(EMI_POL["CCCRRRAAA"]=="DENMARK") & (EMI_POL["GROUP"]=="ALL_SECTORS") & (EMI_POL["EMIPOLSET"]=="TAX_CO2"), "value"]=sample["CO2_TAX"]
@@ -51,7 +60,7 @@ def run_scenario(index, sample):
     XKRATE.loc[:,"value"] = sample["E_T_AVAIL"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
-    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
+    os.system("gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
     if not os.path.isdir("../scenario_data"):
@@ -59,16 +68,20 @@ if __name__ == '__main__':
         os.makedirs("../scenario_data/log_files")
         os.makedirs("../scenario_data/input_data")
         os.makedirs("../scenario_data/output_data")
-    sampler = morris_sampler(input="input_params.csv", N=1, rng=42)
+        
+    # Arguments
+    num_scen, input_file = get_arg()
+    
+    sampler = lhc_sampler(input=input_file, N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
-    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    os.system('gams ./Balmorel_ReadData.gms license=/work3/s233235/gamslice.txt --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     tic = time.time()
-    #pool = mp.Pool(processes=mp.cpu_count()-1)
-    pool = mp.Pool(processes=4)
+    pool = mp.Pool(processes=mp.cpu_count()-1)
+    # pool = mp.Pool(processes=4)
     results = pool.starmap_async(run_scenario, [(index, sample) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
