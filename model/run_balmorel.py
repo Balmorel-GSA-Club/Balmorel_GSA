@@ -80,3 +80,5 @@ if __name__ == '__main__':
     tac = time.time()
     time_trajectory = tac-tic
     print("Time to create scenarios:", timedelta(seconds=time_trajectory))
+    
+    print("test")
