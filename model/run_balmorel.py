@@ -60,7 +60,7 @@ def run_scenario(index, sample):
     XKRATE.loc[:,"value"] = sample["E_T_AVAIL"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
-    os.system("gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
+    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
     if not os.path.isdir("../scenario_data"):
@@ -72,20 +72,25 @@ if __name__ == '__main__':
     # Arguments
     num_scen, input_file = get_arg()
     
+    # Sampling
     sampler = lhc_sampler(input=input_file, N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
+    
+    # Get the base data of the sets we are going to change and launch the baseline
     sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
-    os.system('gams ./Balmorel_ReadData.gms license=/work3/s233235/gamslice.txt --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-    os.system('gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    
+    # Loop for multi-core launch
     tic = time.time()
     pool = mp.Pool(processes=mp.cpu_count()-1)
-    # pool = mp.Pool(processes=4)
     results = pool.starmap_async(run_scenario, [(index, sample) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
 
+    # Merge the results files
     merge_cmd = "gdxmerge"
     for id in range(len(samples)):
         merge_cmd += " ../scenario_data/output_data/Results_scenario_{}.gdx".format(id+1)
