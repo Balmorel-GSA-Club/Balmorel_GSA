@@ -15,52 +15,40 @@ def get_arg():
     args = parser.parse_args()
     return args.nb_scen, args.input_sample
 
+
+
 def run_scenario(index, sample):
     print("Running scenario {}".format(index+1))
     base_data = Container(load_from="../scenario_data/input_data/input_data_baseline.gdx")
     scenario_data = copy(base_data)
 
-
-    EMI_POL = scenario_data["EMI_POL"].records
-    EMI_POL.loc[(EMI_POL["CCCRRRAAA"]=="DENMARK") & (EMI_POL["GROUP"]=="ALL_SECTORS") & (EMI_POL["EMIPOLSET"]=="TAX_CO2"), "value"]=sample["CO2_TAX"]
-    
-    XINVCOST = scenario_data["XINVCOST"].records
-    XINVCOST.loc[:,"value"] *= sample["E_T_INVC"]
-
-    GDATA = scenario_data["GDATA_numerical"].records
-    GDATA.loc[(GDATA["GGG"].str.contains("ELYS")) & (GDATA["GDATASET"].str.contains("GDINVCOST0")),"value"]*=sample["ELEC_INVC"]
-    GDATA.loc[(GDATA["GGG"].str.contains("STEAM")) & (GDATA["GDATASET"].str.contains("GDINVCOST0")),"value"]*=sample["ELEC_STEAM_INVC"]
-
-    FUELPRICE = scenario_data["FUELPRICE"].records
-    FUELPRICE.loc[FUELPRICE["FFF"]=="NATGAS","value"]*=sample["NATGAS_P"]
-    
+    North_l_PV = ["DK","NO","SE","NL", "DE4-E","DE4-N","DE4-W","FIN", "UK","EE","LV","LT","PL","BE"]
+    North_PV = '|'.join(North_l_PV)
+    South_l_PV = ["DE4-S","FR","IT","CH","AT","CZ","ES","PT","SK","HU","SI","HR","RO","BG","GR","IE","LU","AL","ME","MK","BA","RS","TR","MT","CY"]
+    South_PV = '|'.join(South_l_PV)
     SUBTECHGROUPKPOT = scenario_data["SUBTECHGROUPKPOT"].records
-    SUBTECHGROUPKPOT.loc[SUBTECHGROUPKPOT["TECH_GROUP"]=="SOLARPV", "value"]*=sample["PV_NORTH"]
-    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains("DK")), "value"]*= sample["ON_SHORE_DK"]
-    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains("DE")), "value"]*= sample["ON_SHORE_DE"]
-    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.startswith(("NO","SE","NL"))), "value"]*= sample["ON_SHORE_NORTH"]
-    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_OFFSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains("DK")), "value"]*= sample["OFF_SHORE_DK"]
-    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_OFFSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains("DE")), "value"]*= sample["OFF_SHORE_DE"]
-    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_OFFSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.startswith(("NO","SE","NL"))), "value"]*= sample["OFF_SHORE_NORTH"]
+    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="SOLARPV") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains(North_PV)), "value"]*= sample["PV_LIMIT_NORTH"]
+    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="SOLARPV") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains(South_PV)), "value"]*= sample["PV_LIMIT_SOUTH"]
     
-    XH2INVCOST = scenario_data["XH2INVCOST"].records
-    XH2INVCOST.loc[:,"value"] *= sample["H2_T_INVC"]
 
+    North_l = ["NO","SE","NL","FIN", "UK","EE","LV","LT","PL","BE"]
+    North = '|'.join(North_l)
+    South_l = ["FR","IT","CH","AT","CZ","ES","PT","SK","HU","SI","HR","RO","BG","GR","IE","LU","AL","ME","MK","BA","RS","TR","MT","CY"]
+    South = '|'.join(South_l)
+    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains("DK")), "value"]*= sample["ONS_LIMIT_DK"]
+    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains("DE")), "value"]*= sample["ONS_LIMIT_DE"]
+    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains(North)), "value"]*= sample["ONS_LIMIT_NORTH"]
+    SUBTECHGROUPKPOT.loc[(SUBTECHGROUPKPOT["TECH_GROUP"]=="WINDTURBINE_ONSHORE") & (SUBTECHGROUPKPOT["CCCRRRAAA"].str.contains(South)), "value"]*= sample["ONS_LIMIT_SOUTH"]
+    
     HYDROGEN_DH2 = scenario_data["HYDROGEN_DH2"].records
-    HYDROGEN_DH2.loc[HYDROGEN_DH2["CCCRRRAAA"].str.contains("DK"), "value"] *= sample["H2_Demand_DK"]
-    HYDROGEN_DH2.loc[HYDROGEN_DH2["CCCRRRAAA"].str.contains("DE"), "value"] *= sample["H2_Demand_DE"]
-    HYDROGEN_DH2.loc[HYDROGEN_DH2["CCCRRRAAA"].str.startswith(("NO", "SE", "NL")), "value"] *= sample["H2_Demand_Rest"]
-    
-    DE = scenario_data["DE"].records
-    DE.loc[DE["RRR"].str.contains("DK"), "value"] *= sample["DE_Demand_DK"]
-    DE.loc[DE["RRR"].str.contains("DE"), "value"] *= sample["DE_Demand_DE"]
-    DE.loc[DE["RRR"].str.startswith(("NO", "SE", "NL")), "value"] *= sample["DE_Demand_Rest"]
-
-    XKRATE = scenario_data["XKRATE"].records
-    XKRATE.loc[:,"value"] = sample["E_T_AVAIL"]
+    HYDROGEN_DH2.loc[HYDROGEN_DH2["CCCRRRAAA"].str.contains("DK"), "value"] *= sample["DH2_DEMAND_DK"]
+    North_and_South_l = ["NO","SE","NL","FIN", "UK","EE","LV","LT","PL","BE","FR","IT","CH","AT","CZ","ES","PT","SK","HU","SI","HR","RO","BG","GR","IE","LU","AL","ME","MK","BA","RS","TR","MT","CY"]
+    North_and_South = '|'.join(North_and_South_l)
+    HYDROGEN_DH2.loc[HYDROGEN_DH2["CCCRRRAAA"].str.contains("DE"), "value"] *= sample["DH2_DEMAND_DE"]
+    HYDROGEN_DH2.loc[HYDROGEN_DH2["CCCRRRAAA"].str.startswith((North_and_South)), "value"] *= sample["DH2_DEMAND_Rest"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
-    os.system("gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
+    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
     if not os.path.isdir("../scenario_data"):
@@ -76,9 +64,9 @@ if __name__ == '__main__':
     sampler.sample()
     sampler.save_samples("samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
-    sets = "DE, FUELPRICE, GDATA_numerical, GDATA_categorical, SUBTECHGROUPKPOT, EMI_POL, XINVCOST, HYDROGEN_DH2, XH2INVCOST, XKRATE"
-    os.system('gams ./Balmorel_ReadData.gms license=/work3/s233235/gamslice.txt --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-    os.system('gams ./Balmorel_finish.gms license=/work3/s233235/gamslice.txt --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    sets = "DE, SUBTECHGROUPKPOT, HYDROGEN_DH2"
+    os.system('gams ./Balmorel_ReadData.gms  --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     tic = time.time()
     pool = mp.Pool(processes=mp.cpu_count()-1)
     # pool = mp.Pool(processes=4)
