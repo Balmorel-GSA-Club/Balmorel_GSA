@@ -44,6 +44,11 @@ def run_scenario(index, sample):
     
     FUELPRICE = scenario_data["FUELPRICE"].records
     FUELPRICE.loc[FUELPRICE["FFF"]=="IMPORT_H2","value"] *= sample["IMPORT_H2_P"]
+    
+    DE = scenario_data["DE"].records
+    DE.loc[DE["RRR"].str.contains("DK"), "value"] *= sample["DE_DEMAND_DK"]
+    DE.loc[DE["RRR"].str.contains("DE"), "value"] *= sample["DE_DEMAND_DE"]
+    DE.loc[~DE["RRR"].str.contains("DK|DE"), "value"] *= sample["DE_DEMAND_Rest"]
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
     os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
@@ -65,7 +70,7 @@ if __name__ == '__main__':
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     
     # Get the base data of the sets we are going to change and launch the baseline
-    sets = "FUELPRICE, GDATA_numerical, GDATA_categorical, EMI_POL, CCS_CO2CAPTEFF_G, XINVCOST, XH2INVCOST"
+    sets = "FUELPRICE, GDATA_numerical, GDATA_categorical, EMI_POL, CCS_CO2CAPTEFF_G, XINVCOST, XH2INVCOST, DE"
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
     os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     
