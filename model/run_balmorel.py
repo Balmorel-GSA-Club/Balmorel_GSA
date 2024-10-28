@@ -77,10 +77,10 @@ def run_scenario(index, sample):
     DE.loc[DE["RRR"].str.contains(East), "value"] *= sample["DE_DEMAND_EAST"]
     DE.loc[DE["RRR"].str.contains(West), "value"] *= sample["DE_DEMAND_WEST"]
     
-    DE.loc[DE["RRR"].str.contains(North) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_NORTH"]
-    DE.loc[DE["RRR"].str.contains(South) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_SOUTH"]
-    DE.loc[DE["RRR"].str.contains(East) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_EAST"]
-    DE.loc[DE["RRR"].str.contains(West) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_WEST"]
+    DE.loc[DE["RRR"].str.contains(North) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS")), "value"] *= sample["TRANS_DEMAND_NORTH"]
+    DE.loc[DE["RRR"].str.contains(South) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS")), "value"] *= sample["TRANS_DEMAND_SOUTH"]
+    DE.loc[DE["RRR"].str.contains(East) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS")), "value"] *= sample["TRANS_DEMAND_EAST"]
+    DE.loc[DE["RRR"].str.contains(West) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS")), "value"] *= sample["TRANS_DEMAND_WEST"]
 
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
