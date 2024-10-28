@@ -76,7 +76,12 @@ def run_scenario(index, sample):
     DE.loc[DE["RRR"].str.contains(South), "value"] *= sample["DE_DEMAND_SOUTH"]
     DE.loc[DE["RRR"].str.contains(East), "value"] *= sample["DE_DEMAND_EAST"]
     DE.loc[DE["RRR"].str.contains(West), "value"] *= sample["DE_DEMAND_WEST"]
-    #DE.loc[~DE["RRR"].str.contains("DK|DE"), "value"] *= sample["DE_DEMAND_Rest"]
+    
+    DE.loc[DE["RRR"].str.contains(North) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_NORTH"]
+    DE.loc[DE["RRR"].str.contains(South) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_SOUTH"]
+    DE.loc[DE["RRR"].str.contains(East) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_EAST"]
+    DE.loc[DE["RRR"].str.contains(West) & (DE["DEUSER"].str.contains("TRANS_TRAINS|TRANS_BUS)")), "value"] *= sample["TRANS_DEMAND_WEST"]
+
 
     scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
     os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
