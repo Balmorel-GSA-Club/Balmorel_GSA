@@ -125,7 +125,7 @@ if __name__ == '__main__':
     # Merge the input data files
     merge_cmd = "gdxmerge"
     for id in range(len(samples)):
-        merge_cmd += " ../scenario_data/output_data/input_data_scenario_{}.gdx".format(id+1)
+        merge_cmd += " ../scenario_data/input_data/input_data_scenario_{}.gdx".format(id+1)
     merge_cmd += " output=../scenario_data/input_data/input_data_merged.gdx"
     os.system(merge_cmd)
     
