@@ -12,8 +12,9 @@ def get_arg():
     parser = argparse.ArgumentParser(description="Process some arguments.")
     parser.add_argument('--nb_scen', type=int, help='Number of scenarios (integer)')
     parser.add_argument('--input_sample', type=str, help='Name of the input sampling csv file (str)')
+    parser.add_argument('--nb_cores', type=int, help='Number of cores (integer)')
     args = parser.parse_args()
-    return args.nb_scen, args.input_sample
+    return args.nb_scen, args.input_sample, args.nb_cores
 
 def run_scenario(index, sample):
     print("Running scenario {}".format(index+1))
@@ -94,7 +95,7 @@ if __name__ == '__main__':
         os.makedirs("../scenario_data/output_data")
         
     # Arguments
-    num_scen, input_file = get_arg()
+    num_scen, input_file, nb_cores = get_arg()
     
     # Sampling
     sampler = lhc_sampler(input=input_file, N=num_scen, rng=42)
@@ -109,7 +110,7 @@ if __name__ == '__main__':
     
     # Loop for multi-core launch
     tic = time.time()
-    pool = mp.Pool(processes=mp.cpu_count()-1)
+    pool = mp.Pool(processes=nb_cores-1)
     results = pool.starmap_async(run_scenario, [(index, sample) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
