@@ -119,7 +119,16 @@ if __name__ == '__main__':
     merge_cmd = "gdxmerge"
     for id in range(len(samples)):
         merge_cmd += " ../scenario_data/output_data/Results_scenario_{}.gdx".format(id+1)
+    merge_cmd += " output=../scenario_data/output_data/Results_merged.gdx"
     os.system(merge_cmd)
+    
+    # Merge the input data files
+    merge_cmd = "gdxmerge"
+    for id in range(len(samples)):
+        merge_cmd += " ../scenario_data/output_data/input_data_scenario_{}.gdx".format(id+1)
+    merge_cmd += " output=../scenario_data/output_data/input_data_merged.gdx"
+    os.system(merge_cmd)
+    
     tac = time.time()
     time_trajectory = tac-tic
     print("Time to create scenarios:", timedelta(seconds=time_trajectory))
