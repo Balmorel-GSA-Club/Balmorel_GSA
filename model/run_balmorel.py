@@ -20,13 +20,13 @@ def run_scenario(index, sample):
     base_data = Container(load_from="../scenario_data/input_data/input_data_baseline.gdx")
     scenario_data = copy(base_data)
     
-    North_l = ["DK","NO","SE", "FIN", "EE","LV","LT"]
+    North_l = ["DK","NO","SE","FIN","EE","LV","LT"]
     North = '|'.join(North_l)
-    South_l = ["IT", "ES","PT","SI","HR","AL","MT","CY", "BA","ME","MK","RS"]
+    South_l = ["IT","ES","PT","GR","SI","HR","AL","MT","CY","BA","ME","MK","RS"]
     South = '|'.join(South_l)
     East_l = ["PL","CZ","SK","RO","BG","HU",]
     East = '|'.join(East_l)
-    West_l = ["FR", "DE","NL","UK", "BE", "LU", "AT","CH", "IE" ]
+    West_l = ["FR","DE","NL","UK","BE","LU","AT","CH","IE" ]
     West = '|'.join(West_l)
     
     SUBTECHGROUPKPOT = scenario_data["SUBTECHGROUPKPOT"].records
