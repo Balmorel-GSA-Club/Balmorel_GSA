@@ -12,3 +12,5 @@ samples.txt
 /model/input_params.csv
 /model/%batfileMERGEWITHBASE%
 /GSA_env
+\.\.\\logerror*
+parameters/
