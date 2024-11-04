@@ -98,9 +98,9 @@ if __name__ == '__main__':
     num_scen, input_file, nb_cores = get_arg()
     
     # Sampling
-    sampler = lhc_sampler(input=input_file, N=num_scen, rng=42)
+    sampler = lhc_sampler(input="../parameters/" + input_file, N=num_scen, rng=42)
     sampler.sample()
-    sampler.save_samples("samples.txt")
+    sampler.save_samples("../scenario_data/input_data/samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     
     # Get the base data of the sets we are going to change and launch the baseline
