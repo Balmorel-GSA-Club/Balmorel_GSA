@@ -6,7 +6,7 @@ import multiprocessing as mp
 from datetime import timedelta
 import time 
 from copy import copy
-from create_samples import lhc_sampler
+from create_samples import sampler
 import pandas as pd
 
 sys.path.append(os.path.abspath("../parameters/"))
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     num_scen, input_file, nb_cores = get_arg()
     
     # Sampling
-    sampler = lhc_sampler(input="../parameters/" + input_file, N=num_scen, rng=42)
+    sampler = sampler("LHC", input="../parameters/" + input_file, N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("../scenario_data/input_data/samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
