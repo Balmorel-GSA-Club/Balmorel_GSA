@@ -441,11 +441,11 @@ $setglobal DECOM yes
 * Note: If no option for endogenous capacities is activated, endogenous investments will not be decommissioned
 
 * Adds Endogenous capacities will maximum stay in the system as much as their lifetimes:
-$setglobal LIFETIME_DECOM_ENDO_G 
+$setglobal LIFETIME_DECOM_ENDO_G YES
 *!option yes
 
 * Adds Endogenous capacities can be decommissioned based on their profitability:
-$setglobal ECONOMIC_DECOM_ENDO_G  
+$setglobal ECONOMIC_DECOM_ENDO_G   yes
 *!option yes
 
 * Adds Endogenous decommissioned endogenous capacities can be brought back to the energy system. To be combined with the other decommissioning options:
@@ -458,7 +458,7 @@ $setglobal REVERT_DECOM_ENDO_G   yes
 * Note: If either NO_DECOM_EXO_G, or LIFETIME_DECOM_EXO_G, or ECONOMIC_DECOM_EXO_Gor is activated, then the parameter GKFX will be recalculated so capacities only increase in the system.
 
 SCALAR GDECOMEXOSTART 'Year from which endogenous decisions in decommissioning of exogenous generation capacities are allowed';
-GDECOMEXOSTART= 2040;
+GDECOMEXOSTART= 2025;
 
 SCALAR GDECOMEXOPOTSTART 'Starting year to calculate the yearly decommissioning capacity potential, i.e. exogenous decommissioning occuring before this year will not be considered' ;
 GDECOMEXOPOTSTART= 2016;
@@ -469,11 +469,11 @@ $setglobal NO_DECOM_EXO_G
 *!option yes
 
 * Adds Exogenous capacities will maximum stay in the system as much as their lifetimes (or as much as political decissions suggest it, for instance), which should be represented in the yearly development of capacities of the input parameter GKFX:
-$setglobal LIFETIME_DECOM_EXO_G 
+$setglobal LIFETIME_DECOM_EXO_G  YES
 *!option yes
 
 * Adds Exogenous capacities can be decommissioned based on their profitability:
-$setglobal ECONOMIC_DECOM_EXO_G  
+$setglobal ECONOMIC_DECOM_EXO_G    yes
 *!option yes
 
 * Adds Endogenous decommissioned exogenous capacities can be brought back to the energy system. To be combined with the other decommissioning options:
