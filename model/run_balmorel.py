@@ -27,7 +27,7 @@ def run_scenario(index, sample, parameters):
     
     scenario_data = parameters.update_input(scenario_data, sample)
 
-    scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1))
+    scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1), eps_to_zero=False)
     os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
