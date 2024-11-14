@@ -9,14 +9,14 @@ from copy import copy
 from create_samples import sampler
 import pandas as pd
 
-sys.path.append(os.path.abspath("../parameters/"))
+sys.path.append(os.path.abspath("../GSA_parameters/"))
 from parameters import GSA_parameters
 
 def get_arg():
     parser = argparse.ArgumentParser(description="Process some arguments.")
-    parser.add_argument('--nb_scen', type=int, help='Number of scenarios (integer)')
-    parser.add_argument('--input_sample', type=str, help='Name of the input sampling csv file (str)')
-    parser.add_argument('--nb_cores', type=int, help='Number of cores (integer)')
+    parser.add_argument('--nb_scen', default=1, type=int, help='Number of scenarios (integer)')
+    parser.add_argument('--input_sample', default="input_params.csv", type=str, help='Name of the input sampling csv file (str)')
+    parser.add_argument('--nb_cores', default=2, type=int, help='Number of cores (integer)')
     args = parser.parse_args()
     return args.nb_scen, args.input_sample, args.nb_cores
 
@@ -41,13 +41,13 @@ if __name__ == '__main__':
     num_scen, input_file, nb_cores = get_arg()
     
     # Sampling
-    sampler = sampler("LHC", input="../parameters/" + input_file, N=num_scen, rng=42)
+    sampler = sampler("Sobol", input="../GSA_parameters/" + input_file, N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("../scenario_data/input_data/samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     
     # Get the base data of the sets we are going to change and launch the baseline
-    parameters = GSA_parameters(input_file = "../parameters/" + input_file)
+    parameters = GSA_parameters(input_file = "../GSA_parameters/" + input_file)
     sets = parameters.load_sets()
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
     os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
