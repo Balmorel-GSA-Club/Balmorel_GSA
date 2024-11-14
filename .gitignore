@@ -15,3 +15,5 @@ samples.txt
 \.\.\\logerror*
 /GSA_parameters
 *.sh
+*.out
+*.err
