@@ -13,4 +13,4 @@ samples.txt
 /model/%batfileMERGEWITHBASE%
 /GSA_env
 \.\.\\logerror*
-GSA_parameters/
+/GSA_parameters
