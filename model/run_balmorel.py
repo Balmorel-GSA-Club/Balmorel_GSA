@@ -41,7 +41,7 @@ if __name__ == '__main__':
     num_scen, input_file, nb_cores = get_arg()
     
     # Sampling
-    sampler = sampler("Sobol", input="../GSA_parameters/" + input_file, N=num_scen, rng=42)
+    sampler = sampler("LHC", input="../GSA_parameters/" + input_file, N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("../scenario_data/input_data/samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
