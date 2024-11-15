@@ -4,7 +4,6 @@ import numpy as np
 from SALib.sample.morris import sample as morris
 from SALib.sample.sobol import sample as sobol
 from SALib.sample.latin import sample as lhc
-from tabulate import tabulate
 from utils import find_factors
 
 class sampler:
@@ -35,27 +34,6 @@ class sampler:
         np.random.seed(self.rng)
         idx = np.random.permutation(len(self.samples))
         self.samples = self.samples[idx]
-
-    def write_Balmorel_files(self):
-        with open("./scenarios.inc", 'w') as file:
-            file.write('SET scenarios "Scenarios for the analysis"\n/Scenario1*Scenario{}/;'.format(len(self.samples)))
-
-    def write_samples_to_inc(self, output="./scenario_creation/output/MorrisSampling_out.inc"):
-        output = open(output, "w")
-        header = []
-        header.append("")
-        for name in self.problem["names"]:
-            header.append(name+" ")
-        lines = []
-        for i in range(self.samples.shape[0]):
-            line = []
-            line.append("Scenario{}".format(i+1))
-            for j in range(self.samples.shape[1]):
-                line.append(self.samples[i,j])
-            lines.append(line)
-
-        output.write(tabulate(lines, header, tablefmt="plain"))
-        output.close()
 
     def save_samples(self, output_file):
         np.savetxt(output_file, self.samples, delimiter=',')
