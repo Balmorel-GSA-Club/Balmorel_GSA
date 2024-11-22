@@ -1,16 +1,50 @@
 $onMultiR
-$gdxLoadAll '../scenario_data/input_data/input_data_%id%.gdx';
+$gdxLoadAll '../scenario_data/input_data/input_data_baseline.gdx';
 $offMulti
 
-GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
-FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
+*-----Condition on the id of the run different of baseline ---------------------
+$ifi %id%==baseline $goto nobaseline
 
-$ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
-$ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
+$onmultiR
+$onembeddedCode Python:
+id_value = int('%id%'.replace("scenario_", ""))
 
-*--- Main results calculation -----------------------------------------------
-$ifi %OUTPUT_SUMMARY%==yes $ifi     exist 'OUTPUT_SUMMARY.inc' $include         'OUTPUT_SUMMARY.inc';
-$ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
+import gams.transfer as gt
+import pandas as pd
+import sys
+import os
+sys.path.append(os.path.abspath("../GSA_parameters/"))
+from parameters import GSA_parameters
+
+scenario_data = gt.Container("../scenario_data/input_data/input_data_baseline.gdx")
+
+parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
+samples = pd.read_csv("../scenario_data/input_data/samples.txt", header=None)
+samples.columns = parameters.parameters
+sample = samples.loc[id_value-1]
+parameters.update_input(scenario_data, sample)
+
+scenario_data.write(gams.db)
+
+$offEmbeddedCode 
+$offmulti
+
+$label nobaseline
+
+# Test
+execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' EMI_POL, SUBTECHGROUPKPOT
+
+*-------------------------------------------------------------------------------
+
+* GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
+* FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
+
+* $ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
+* $ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
+
+* *--- Main results calculation -----------------------------------------------
+* $ifi %OUTPUT_SUMMARY%==yes $ifi     exist 'OUTPUT_SUMMARY.inc' $include         'OUTPUT_SUMMARY.inc';
+* $ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
 *--- End of Main results calculation ---------------------------------------
 
 *execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' PRO_YCRAGF
