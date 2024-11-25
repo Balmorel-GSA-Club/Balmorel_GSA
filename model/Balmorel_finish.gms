@@ -1,14 +1,15 @@
-$onMultiR
-$gdxLoadAll '../scenario_data/input_data/input_data_baseline.gdx';
-$offMulti
+GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
+FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
 
 *-----Condition on the id of the run different of baseline ---------------------
 $ifi %id%==baseline $goto nobaseline
 
-$onmultiR
+$onMultiR
 $onembeddedCode Python:
+# Id of the scenario
 id_value = int('%id%'.replace("scenario_", ""))
 
+# Import necessary libraries
 import gams.transfer as gt
 import pandas as pd
 import sys
@@ -16,20 +17,23 @@ import os
 sys.path.append(os.path.abspath("../GSA_parameters/"))
 from parameters import GSA_parameters
 
-scenario_data = gt.Container('../scenario_data/input_data/input_data_baseline.gdx')
-
+# Loading the input samples
 parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
 samples = pd.read_csv("../scenario_data/input_data/samples.txt", header=None)
 samples.columns = parameters.parameters
 sample = samples.loc[id_value-1]
+
+# Loading the current database
+scenario_data = gt.Container(gams.db)
+
+# Modifying the parameters as needed
 parameters.update_input(scenario_data, sample)
 
-scenario_data.isValid(verbose=True, force=True)
-
-# scenario_data.write(gams.db)
+# Write back the modified database
+scenario_data.write(gams.db, parameters.load_sets().split(", "), eps_to_zero=False)
 
 $offEmbeddedCode 
-$offmulti
+$offMulti
 
 $label nobaseline
 
@@ -37,9 +41,6 @@ $label nobaseline
 execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' EMI_POL, SUBTECHGROUPKPOT ;
 
 *-------------------------------------------------------------------------------
-
-* GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
-* FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
 
 * $ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
 * $ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
@@ -49,7 +50,7 @@ execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' EMI_POL, 
 * $ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
 *--- End of Main results calculation ---------------------------------------
 
-*execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' PRO_YCRAGF
+
 $ontext
 $ifi %BB4%==yes $goto ENDOFMODEL
 *-------------------------------------------------------------------------------

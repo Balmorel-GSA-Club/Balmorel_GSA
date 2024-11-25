@@ -46,24 +46,24 @@ if __name__ == '__main__':
     # Get the base data of the sets we are going to change and launch the baseline
     parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
     sets = parameters.load_sets()
-    # os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-    # os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     
     # Loop for multi-core launch
     tic = time.time()
-    pool = mp.Pool()
+    pool = mp.Pool(processes = 1)
     results = pool.starmap_async(run_scenario, [(index, sample, parameters) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
 
-    # # Merge the results files
-    # merge_cmd = "gdxmerge"
-    # for id in range(len(samples)):
-    #     merge_cmd += " ../scenario_data/output_data/Results_scenario_{}.gdx".format(id+1)
-    # merge_cmd += " output=../scenario_data/output_data/Results_merged.gdx"
-    # os.system(merge_cmd)
+    # Merge the results files
+    merge_cmd = "gdxmerge"
+    for id in range(len(samples)):
+        merge_cmd += " ../scenario_data/output_data/Results_scenario_{}.gdx".format(id+1)
+    merge_cmd += " output=../scenario_data/output_data/Results_merged.gdx"
+    os.system(merge_cmd)
     
-    # # Merge the input data files
+    # # Merge the input data files -> Not working for now
     # merge_cmd = "gdxmerge"
     # for id in range(len(samples)):
     #     merge_cmd += " ../scenario_data/input_data/input_data_scenario_{}.gdx".format(id+1)
