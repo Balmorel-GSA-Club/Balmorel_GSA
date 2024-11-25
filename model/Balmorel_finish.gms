@@ -16,7 +16,7 @@ import os
 sys.path.append(os.path.abspath("../GSA_parameters/"))
 from parameters import GSA_parameters
 
-scenario_data = gt.Container("../scenario_data/input_data/input_data_baseline.gdx")
+scenario_data = gt.Container('../scenario_data/input_data/input_data_baseline.gdx')
 
 parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
 samples = pd.read_csv("../scenario_data/input_data/samples.txt", header=None)
@@ -24,15 +24,17 @@ samples.columns = parameters.parameters
 sample = samples.loc[id_value-1]
 parameters.update_input(scenario_data, sample)
 
-scenario_data.write(gams.db)
+scenario_data.isValid(verbose=True, force=True)
+
+# scenario_data.write(gams.db)
 
 $offEmbeddedCode 
 $offmulti
 
 $label nobaseline
 
-# Test
-execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' EMI_POL, SUBTECHGROUPKPOT
+* Test
+execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' EMI_POL, SUBTECHGROUPKPOT ;
 
 *-------------------------------------------------------------------------------
 
