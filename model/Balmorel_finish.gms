@@ -23,14 +23,32 @@ samples = pd.read_csv("../scenario_data/input_data/samples.txt", header=None)
 samples.columns = parameters.parameters
 sample = samples.loc[id_value-1]
 
-# Loading the current database
-scenario_data = gt.Container(gams.db)
+set_list = parameters.load_sets().split(", ")
+scenario_data = {}
+gams.epsAszero=False
 
-# Modifying the parameters as needed
+for set in set_list :
+    set_data = gams.get(set, keyFormat=KeyFormat.FLAT)
+    if set == "SUBTECHGROUPKPOT" :
+        print(4.94066E-324)
+        print(set)
+        print(set_data)
+    # Transform the data into a dataframe
+    set_data = pd.DataFrame(set_data)
+    scenario_data[set] = set_data
+    if set == "SUBTECHGROUPKPOT" :
+        print(set)
+        print(set_data)
+
+
 parameters.update_input(scenario_data, sample)
 
-# Write back the modified database
-scenario_data.write(gams.db, parameters.load_sets().split(", "), eps_to_zero=False)
+for set in set_list :
+    # Transform the data of the dataframe into a list of tuples
+    set_data = list(scenario_data[set].itertuples(index=False, name=None))
+    # Put them back into the system
+    gams.set(set, set_data)
+    print(set, " successfully updated")
 
 $offEmbeddedCode 
 $offMulti
