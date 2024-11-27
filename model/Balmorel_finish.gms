@@ -1,6 +1,3 @@
-GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
-FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
-
 *-----Condition on the id of the run different of baseline ---------------------
 $ifi %id%==baseline $goto nobaseline
 
@@ -10,7 +7,6 @@ $onembeddedCode Python:
 id_value = int('%id%'.replace("scenario_", ""))
 
 # Import necessary libraries
-import gams.transfer as gt
 import pandas as pd
 import sys
 import os
@@ -25,21 +21,13 @@ sample = samples.loc[id_value-1]
 
 set_list = parameters.load_sets().split(", ")
 scenario_data = {}
-gams.epsAszero=False
+gams.epsAsZero = False
 
 for set in set_list :
-    set_data = gams.get(set, keyFormat=KeyFormat.FLAT)
-    if set == "SUBTECHGROUPKPOT" :
-        print(4.94066E-324)
-        print(set)
-        print(set_data)
+    set_data = list(gams.get(set, keyFormat=KeyFormat.FLAT))
     # Transform the data into a dataframe
     set_data = pd.DataFrame(set_data)
     scenario_data[set] = set_data
-    if set == "SUBTECHGROUPKPOT" :
-        print(set)
-        print(set_data)
-
 
 parameters.update_input(scenario_data, sample)
 
@@ -48,24 +36,23 @@ for set in set_list :
     set_data = list(scenario_data[set].itertuples(index=False, name=None))
     # Put them back into the system
     gams.set(set, set_data)
-    print(set, " successfully updated")
 
 $offEmbeddedCode 
 $offMulti
 
 $label nobaseline
 
-* Test
-execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' EMI_POL, SUBTECHGROUPKPOT ;
+GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
+FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
 
 *-------------------------------------------------------------------------------
 
-* $ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
-* $ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
+$ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
+$ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
 
-* *--- Main results calculation -----------------------------------------------
-* $ifi %OUTPUT_SUMMARY%==yes $ifi     exist 'OUTPUT_SUMMARY.inc' $include         'OUTPUT_SUMMARY.inc';
-* $ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
+*--- Main results calculation -----------------------------------------------
+$ifi %OUTPUT_SUMMARY%==yes $ifi     exist 'OUTPUT_SUMMARY.inc' $include         'OUTPUT_SUMMARY.inc';
+$ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
 *--- End of Main results calculation ---------------------------------------
 
 

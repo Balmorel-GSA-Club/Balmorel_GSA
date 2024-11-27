@@ -1,4 +1,3 @@
-from gamspy import Container
 import os
 import sys
 import argparse
@@ -46,12 +45,12 @@ if __name__ == '__main__':
     # Get the base data of the sets we are going to change and launch the baseline
     parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
     sets = parameters.load_sets()
-    # os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
-    # os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
+    os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
+    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     
     # Loop for multi-core launch
     tic = time.time()
-    pool = mp.Pool(processes = nb_cores-1)
+    pool = mp.Pool(processes = nb_cores-2)
     results = pool.starmap_async(run_scenario, [(index, sample, parameters) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
