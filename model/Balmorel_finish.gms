@@ -1,9 +1,51 @@
+*-----Condition on the id of the run different of baseline ---------------------
+$ifi %id%==baseline $goto nobaseline
+
 $onMultiR
-$gdxLoadAll '../scenario_data/input_data/input_data_%id%.gdx';
+$onembeddedCode Python:
+# Id of the scenario
+id_value = int('%id%'.replace("scenario_", ""))
+
+# Import necessary libraries
+import pandas as pd
+import sys
+import os
+sys.path.append(os.path.abspath("../GSA_parameters/"))
+from parameters import GSA_parameters
+
+# Loading the input samples
+parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
+samples = pd.read_csv("../scenario_data/input_data/samples.txt", header=None)
+samples.columns = parameters.parameters
+sample = samples.loc[id_value-1]
+
+set_list = parameters.load_sets().split(", ")
+scenario_data = {}
+gams.epsAsZero = False
+
+for set in set_list :
+    set_data = list(gams.get(set, keyFormat=KeyFormat.FLAT))
+    # Transform the data into a dataframe
+    set_data = pd.DataFrame(set_data)
+    scenario_data[set] = set_data
+
+parameters.update_input(scenario_data, sample)
+
+for set in set_list :
+    # Transform the data of the dataframe into a list of tuples
+    set_data = list(scenario_data[set].itertuples(index=False, name=None))
+    # Put them back into the system
+    gams.set(set, set_data)
+
+$offEmbeddedCode 
 $offMulti
+
+$label nobaseline
 
 GDATA(GGG,GDATASET_numerical) = GDATA_numerical(GGG, GDATASET_numerical);
 FDATA(FFF,FDATASET)$ (not sameAs(FDATASET,'FDACRONYM'))=FDATA_numerical(FFF,FDATASET);
+
+*-------------------------------------------------------------------------------
 
 $ifi %BB4%==yes $ifi     exist 'Balmorelbb4_finish.inc'  $include  'Balmorelbb4_finish.inc';
 $ifi %BB4%==yes $ifi not exist 'Balmorelbb4_finish.inc'  $include  '../../base/model/Balmorelbb4_finish.inc';
@@ -13,7 +55,7 @@ $ifi %OUTPUT_SUMMARY%==yes $ifi     exist 'OUTPUT_SUMMARY.inc' $include         
 $ifi %OUTPUT_SUMMARY%==yes $ifi not exist 'OUTPUT_SUMMARY.inc' $include         '../../base/output/OUTPUT_SUMMARY.inc';
 *--- End of Main results calculation ---------------------------------------
 
-*execute_unload '../scenario_data/output_data/ScenarioResults_%id%.gdx' PRO_YCRAGF
+
 $ontext
 $ifi %BB4%==yes $goto ENDOFMODEL
 *-------------------------------------------------------------------------------
