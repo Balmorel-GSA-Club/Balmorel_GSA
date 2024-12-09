@@ -1,4 +1,3 @@
-from gamspy import Container
 import os
 import sys
 import argparse
@@ -22,12 +21,6 @@ def get_arg():
 
 def run_scenario(index, sample, parameters):
     print("Running scenario {}".format(index+1))
-    base_data = Container(load_from="../scenario_data/input_data/input_data_baseline.gdx")
-    scenario_data = copy(base_data)
-    
-    scenario_data = parameters.update_input(scenario_data, sample)
-
-    scenario_data.write("../scenario_data/input_data/input_data_scenario_{}.gdx".format(index+1), eps_to_zero=False)
     os.system("gams ./Balmorel_finish.gms --id=scenario_{0} r=s1 > ../scenario_data/log_files/output_file_scenario_{0}.txt".format(index+1))
 
 if __name__ == '__main__': 
@@ -40,21 +33,24 @@ if __name__ == '__main__':
     # Arguments
     num_scen, input_file, nb_cores = get_arg()
     
+    # Copy input csv file to scenario data input data folder (more easy for gams part)
+    os.system("cp ../GSA_parameters/{} ../scenario_data/input_data/input.csv".format(input_file))
+    
     # Sampling
-    sampler = sampler("Sobol", input="../GSA_parameters/" + input_file, N=num_scen, rng=42)
+    sampler = sampler("LHC", input="../scenario_data/input_data/input.csv", N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("../scenario_data/input_data/samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
     
     # Get the base data of the sets we are going to change and launch the baseline
-    parameters = GSA_parameters(input_file = "../GSA_parameters/" + input_file)
+    parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
     sets = parameters.load_sets()
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../scenario_data/log_files/output_file_baseline.txt'.format(sets))
     os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../scenario_data/log_files/output_file_baseline2.txt')
     
     # Loop for multi-core launch
     tic = time.time()
-    pool = mp.Pool(processes=nb_cores-1)
+    pool = mp.Pool(processes = nb_cores-2)
     results = pool.starmap_async(run_scenario, [(index, sample, parameters) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
@@ -66,12 +62,12 @@ if __name__ == '__main__':
     merge_cmd += " output=../scenario_data/output_data/Results_merged.gdx"
     os.system(merge_cmd)
     
-    # Merge the input data files
-    merge_cmd = "gdxmerge"
-    for id in range(len(samples)):
-        merge_cmd += " ../scenario_data/input_data/input_data_scenario_{}.gdx".format(id+1)
-    merge_cmd += " exclude=FUELPRICE output=../scenario_data/input_data/input_data_merged.gdx"
-    os.system(merge_cmd)
+    # # Merge the input data files -> Not working for now
+    # merge_cmd = "gdxmerge"
+    # for id in range(len(samples)):
+    #     merge_cmd += " ../scenario_data/input_data/input_data_scenario_{}.gdx".format(id+1)
+    # merge_cmd += " exclude=FUELPRICE output=../scenario_data/input_data/input_data_merged.gdx"
+    # os.system(merge_cmd)
     
     tac = time.time()
     time_trajectory = tac-tic
