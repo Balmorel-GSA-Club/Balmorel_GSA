@@ -37,7 +37,7 @@ if __name__ == '__main__':
     os.system("cp ../GSA_parameters/{} ../scenario_data/input_data/input.csv".format(input_file))
     
     # Sampling
-    sampler = sampler("LHC", input="../scenario_data/input_data/input.csv", N=num_scen, rng=42)
+    sampler = sampler("Sobol", input="../scenario_data/input_data/input.csv", N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("../scenario_data/input_data/samples.txt")
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
