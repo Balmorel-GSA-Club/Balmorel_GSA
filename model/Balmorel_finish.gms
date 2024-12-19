@@ -5,6 +5,7 @@ $onMultiR
 $onembeddedCode Python:
 # Id of the scenario
 id_value = int('%id%'.replace("scenario_", ""))
+rpath = str("%rpath%")
 
 # Import necessary libraries
 import pandas as pd
@@ -14,8 +15,8 @@ sys.path.append(os.path.abspath("../GSA_parameters/"))
 from parameters import GSA_parameters
 
 # Loading the input samples
-parameters = GSA_parameters(input_file = "../scenario_data/input_data/input.csv")
-samples = pd.read_csv("../scenario_data/input_data/samples.txt", header=None)
+parameters = GSA_parameters(input_file = "../{}/input_data/input.csv".format(rpath))
+samples = pd.read_csv("../{}/input_data/samples.txt".format(rpath), header=None)
 samples.columns = parameters.parameters
 sample = samples.loc[id_value-1]
 
