@@ -3,11 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from SALib.sample.morris import sample as morris
 from SALib.sample.sobol import sample as sobol
+from SALib.sample.fast_sampler import sample as fast
 from SALib.sample.latin import sample as lhc
 from utils import find_factors
 
 class sampler:
-    def __init__(self, method, input="./input_params.csv", N=10, num_levels=4, rng=None):
+    def __init__(self, method, input="./input_params.csv", N=10, num_levels=10, rng=None):
         self.method = method
         self.input = pd.read_csv(input)
         self.N = N
@@ -22,11 +23,13 @@ class sampler:
 
     def sample(self):
         if self.method == "Morris":
-            self.samples = morris(self.problem, self.N, self.num_levels, seed=np.random.seed(self.rng))
+            self.samples = morris(self.problem, self.N, self.num_levels, seed=self.rng)
         elif self.method == "Sobol":
-            self.samples = sobol(self.problem, self.N, seed=np.random.seed(self.rng))
+            self.samples = sobol(self.problem, self.N, seed=self.rng)
         elif self.method == "LHC":
-            self.samples = lhc(self.problem, self.N, seed=np.random.seed(self.rng))
+            self.samples = lhc(self.problem, self.N, seed=self.rng)
+        elif self.method =="FAST":
+            self.samples = fast(self.problem, self.N, seed=self.rng)
         else:   
             print("Invalid sampling method")
         

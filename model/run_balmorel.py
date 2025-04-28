@@ -17,29 +17,27 @@ def get_arg():
     parser.add_argument('--input_sample', default="input_params.csv", type=str, help='Name of the input sampling csv file (str)')
     parser.add_argument('--nb_cores', default=2, type=int, help='Number of cores (integer)')
     parser.add_argument('--path', default='scenario_data', type=str, help='Path to save scenario data')
+    parser.add_argument('--sampler', default='Sobol', type=str, help='Sampling strategy used for sampling (Morris, Sobol, LHC, FAST)')
     args = parser.parse_args()
-    return args.nb_scen, args.input_sample, args.nb_cores, args.path
+    return args.nb_scen, args.input_sample, args.nb_cores, args.path, args.sampler
 
 def run_scenario(index, sample, parameters, rpath):
     print("Running scenario {}".format(index+1))
-    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} --rpath={1} r=s1 > ../{1}/log_files/output_file_scenario_{0}.txt".format(index+1, rpath))
+    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} --rpath={1} r=s1 threads=1 > ../{1}/log_files/output_file_scenario_{0}.txt".format(index+1, rpath))
 
 if __name__ == '__main__': 
-    num_scen, input_file, nb_cores, rpath = get_arg()
+    num_scen, input_file, nb_cores, rpath, sampling_strategy = get_arg()
     if not os.path.isdir("../{}".format(rpath)):
         os.makedirs("../{}".format(rpath))
         os.makedirs("../{}/log_files".format(rpath))
         os.makedirs("../{}/input_data".format(rpath))
         os.makedirs("../{}/output_data".format(rpath))
-        
-    # Arguments
-    num_scen, input_file, nb_cores, rpath = get_arg()
     
     # Copy input csv file to scenario data input data folder (more easy for gams part)
     os.system("cp ../GSA_parameters/{} ../{}/input_data/input.csv".format(input_file, rpath))
     
     # Sampling
-    sampler = sampler("Sobol", input="../{}/input_data/input.csv".format(rpath), N=num_scen, rng=42)
+    sampler = sampler(sampling_strategy, input="../{}/input_data/input.csv".format(rpath), N=num_scen, rng=42)
     sampler.sample()
     sampler.save_samples("../{}/input_data/samples.txt".format(rpath))
     samples = pd.DataFrame(sampler.samples, columns = sampler.problem["names"])
@@ -48,7 +46,7 @@ if __name__ == '__main__':
     parameters = GSA_parameters(input_file = "../{}/input_data/input.csv".format(rpath))
     sets = parameters.load_sets()
     os.system('gams ./Balmorel_ReadData.gms --params="{}" s=s1 > ../{}/log_files/output_file_baseline.txt'.format(sets, rpath))
-    os.system('gams ./Balmorel_finish.gms --id=baseline r=s1 > ../{}/log_files/output_file_baseline2.txt'.format(rpath))
+    os.system('gams ./Balmorel_finish.gms --id=baseline --rpath={1} r=s1 threads={0}> ../{1}/log_files/output_file_baseline2.txt'.format(nb_cores-1, rpath))
     
     # Loop for multi-core launch
     tic = time.time()
