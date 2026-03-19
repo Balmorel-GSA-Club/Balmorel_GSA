@@ -16,17 +16,18 @@ def get_arg():
     parser.add_argument('--nb_scen', default=1, type=int, help='Number of scenarios (integer)')
     parser.add_argument('--input_sample', default="input_params.csv", type=str, help='Name of the input sampling csv file (str)')
     parser.add_argument('--nb_cores', default=2, type=int, help='Number of cores (integer)')
+    parser.add_argument('--threads', '-t', default=1, type=int, help='Number of threads for each scenario (integer)')
     parser.add_argument('--path', default='scenario_data', type=str, help='Path to save scenario data')
     parser.add_argument('--sampler', default='Sobol', type=str, help='Sampling strategy used for sampling (Morris, Sobol, LHC, FAST)')
     args = parser.parse_args()
-    return args.nb_scen, args.input_sample, args.nb_cores, args.path, args.sampler
+    return args.nb_scen, args.input_sample, args.nb_cores, args.threads, args.path, args.sampler
 
-def run_scenario(index, sample, parameters, rpath):
+def run_scenario(index, sample, parameters, rpath, threads):
     print("Running scenario {}".format(index+1))
-    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} --rpath={1} r=s1 threads=1 > ../{1}/log_files/output_file_scenario_{0}.txt".format(index+1, rpath))
+    os.system("gams ./Balmorel_finish.gms --id=scenario_{0} --rpath={1} r=s1 threads={2} > ../{1}/log_files/output_file_scenario_{0}.txt".format(index+1, rpath, threads))
 
 if __name__ == '__main__': 
-    num_scen, input_file, nb_cores, rpath, sampling_strategy = get_arg()
+    num_scen, input_file, nb_cores, threads, rpath, sampling_strategy = get_arg()
     if not os.path.isdir("../{}".format(rpath)):
         os.makedirs("../{}".format(rpath))
         os.makedirs("../{}/log_files".format(rpath))
@@ -50,8 +51,10 @@ if __name__ == '__main__':
     
     # Loop for multi-core launch
     tic = time.time()
-    pool = mp.Pool(processes = nb_cores-2)
-    results = pool.starmap(run_scenario, [(index, sample, parameters, rpath) for index, sample in samples.iterrows()])
+    # Calculate number of scenarios to run in parallel based on the number of cores and threads
+    num_processes = nb_cores // threads
+    pool = mp.Pool(processes =num_processes)
+    results = pool.starmap(run_scenario, [(index, sample, parameters, rpath, threads) for index, sample in samples.iterrows()])
     pool.close()
     pool.join()
 
