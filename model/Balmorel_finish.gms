@@ -1,3 +1,4 @@
+$setglobal simex_path "../scenario_data/simex/simex_%id%"
 *-----Condition on the id of the run different of baseline ---------------------
 $ifi %id%==baseline $goto nobaseline
 
