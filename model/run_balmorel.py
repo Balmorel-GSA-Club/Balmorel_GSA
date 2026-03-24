@@ -33,6 +33,7 @@ if __name__ == '__main__':
         os.makedirs("../{}/log_files".format(rpath))
         os.makedirs("../{}/input_data".format(rpath))
         os.makedirs("../{}/output_data".format(rpath))
+        os.makedirs("../{}/simex".format(rpath))
     
     # Copy input csv file to scenario data input data folder (more easy for gams part)
     os.system("cp ../GSA_parameters/{} ../{}/input_data/input.csv".format(input_file, rpath))
