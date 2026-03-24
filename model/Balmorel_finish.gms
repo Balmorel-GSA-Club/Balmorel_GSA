@@ -1,3 +1,4 @@
+$ifi not dexist "../scenario_data/simex/simex_%id%"            execute 'mkdir -p "../scenario_data/simex/simex_%id%"';
 $setglobal simex_path "../scenario_data/simex/simex_%id%"
 *-----Condition on the id of the run different of baseline ---------------------
 $ifi %id%==baseline $goto nobaseline
