@@ -9,6 +9,7 @@ $onembeddedCode Python:
 id_value = int('%id%'.replace("scenario_", ""))
 
 # Import necessary libraries
+import gdxpds
 import pandas as pd
 import sys
 import os
@@ -33,9 +34,14 @@ for set in set_list :
 
 parameters.update_input(scenario_data, sample)
 
-with pd.ExcelWriter(f"../scenario_data/input_data/input_data_scenario_{id_value}.xlsx") as writer:
-    for key, df in scenario_data.items():
-        df.to_excel(writer, sheet_name=key, index=False)
+#with pd.ExcelWriter(f"../scenario_data/input_data/input_data_scenario_{id_value}.xlsx") as writer:
+#    for key, df in scenario_data.items():
+#        df.to_excel(writer, sheet_name=key, index=False)
+
+
+
+gdx_out_path = f"../scenario_data/input_data/input_data_scenario_{id_value}.gdx"
+gdxpds.write_gdx.to_gdx(scenario_data, gdx_out_path)
 
 for set in set_list :
     # Transform the data of the dataframe into a list of tuples

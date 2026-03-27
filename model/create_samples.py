@@ -22,11 +22,11 @@ class sampler:
 
     def sample(self):
         if self.method == "Morris":
-            self.samples = morris(self.problem, self.N, self.num_levels, seed=np.random.seed(self.rng))
+            self.samples = morris(self.problem, self.N, self.num_levels, seed=self.rng)
         elif self.method == "Sobol":
-            self.samples = sobol(self.problem, self.N, seed=np.random.seed(self.rng))
+            self.samples = sobol(self.problem, self.N, seed=self.rng)
         elif self.method == "LHC":
-            self.samples = lhc(self.problem, self.N, seed=np.random.seed(self.rng))
+            self.samples = lhc(self.problem, self.N, seed=self.rng)
         else:   
             print("Invalid sampling method")
         
