@@ -28,7 +28,7 @@ $setglobal reduced_vqdebug
 *-----------------------------------------------------------------
 *---- END: VQDEBUG ------------------------------------------------
 
-$setglobal SCNAME _TOTAL
+$setglobal SCNAME _APS
 *!option _LS *Late Sprint
 *!option _M  *Marathon
 *!option _ES *Early Sprint
