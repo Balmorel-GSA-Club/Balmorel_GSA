@@ -458,12 +458,10 @@ EL_DEMAND_YCRST(Y,C,IR,S,T,'ENDO_INTERSTO','MWh')$CCCRRR(C,IR)=
 
 $ifi not %EV%==yes $goto NO_EV
 EL_DEMAND_YCRST(Y,C,IR,S,T,'ENDO_EV','MWh')$CCCRRR(C,IR)=
-                                + VEV_VG2V_BEV.L(Y,IR,S,T)
-                                + VEV_VG2V_PHEV.L(Y,IR,S,T)
-$ifi %V2G%==yes                 - VEV_VV2G_BEV.L(Y,IR,S,T)
-$ifi %V2G%==yes                 - VEV_VV2G_PHEV.L(Y,IR,S,T)
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_BEV.L(Y,IR,S,T)$(cs('v2g',IY411))
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_PHEV.L(Y,IR,S,T)$(cs('v2g',IY411))
+                                + VEV_G2V_BEV.L(Y,IR,S,T)
+                                + VEV_G2V_PHEV.L(Y,IR,S,T)
+$ifi %V2G%==yes                 - VEV_V2G_BEV.L(Y,IR,S,T)
+$ifi %V2G%==yes                 - VEV_V2G_PHEV.L(Y,IR,S,T)
 ;
 $label NO_EV
 
@@ -503,19 +501,7 @@ $ifi not %stointers%==all +SUM(IA$RRRAAA(IR,IA),SUM(IGESTO$IAGK_HASORPOT(Y,IA,IG
 $ifi     %stointers%==all +SUM(IA$RRRAAA(IR,IA),SUM(IGESTO$IAGK_HASORPOT(Y,IA,IGESTO),VESTOLOADTS.L(Y,IA,IGESTO,S,T)*DISLOSS_E_AG(IA,IGESTO)/(1-DISLOSS_E_AG(IA,IGESTO))))
 * INTERSEASONAL ELECTRICITY STORAGE
 +SUM(IA$RRRAAA(IR,IA),SUM(IGESTOS$IAGK_HASORPOT(Y,IA,IGESTOS),VESTOLOADT.L(Y,IA,IGESTOS,S,T)*DISLOSS_E_AG(IA,IGESTOS)/(1-DISLOSS_E_AG(IA,IGESTOS))))
-* EVs
-$ifi not %EV%==yes $goto NO_EV2
-                               +(
-                                + VEV_VG2V_BEV.L(Y,IR,S,T)
-                                + VEV_VG2V_PHEV.L(Y,IR,S,T)
-                                )*EV_DISTLOSSLOAD(IR)/(1-EV_DISTLOSSLOAD(IR))
-                                +(
-$ifi %V2G%==yes                 - VEV_VV2G_BEV.L(Y,IR,S,T)
-$ifi %V2G%==yes                 - VEV_VV2G_PHEV.L(Y,IR,S,T)
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_BEV.L(Y,IR,S,T)$(cs('v2g',IY411))
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_PHEV.L(Y,IR,S,T)$(cs('v2g',IY411))
-                                +0)*EV_DISTLOSSUNLOAD(IR)/(1-EV_DISTLOSSUNLOAD(IR))
-$label NO_EV2
+
 *CCS
 $ifi %CCS%==yes +SUM((IA,G)$(IAGK_HASORPOT(Y,IA,G) AND RRRAAA(IR,IA) AND CCS_G(G)),VGF_T.L(Y,IA,G,S,T) * IM_CO2(G)*IOF0001 * IOF3P6 * CCS_CO2CAPTEFF_G(G)* CCS_DECO2COMP_G(G)*DISLOSS_E_AG(IA,G)/(1-DISLOSS_E_AG(IA,G)))
 
@@ -1632,11 +1618,11 @@ H_BALANCE_YCRAST(Y,C,IR,IA,'PRICE',S,T,'Money_per_MWh')$(CCCRRR(C,IR) AND RRRAAA
 
 
 
-execute_unload "../scenario_data/output_data/Results_%id%.gdx" PRO_YCRAGF,G_CAP_YCRAF,CC_YCRAG, EMI_YCRAG, G_STO_YCRAF, SUBTECHGROUPKPOT, X_CAP_YCR, X_FLOW_YCR
+execute_unload "../scenario_data/output_data/Results_%id%.gdx" PRO_YCRAGF,G_CAP_YCRAF,CC_YCRAG, EMI_YCRAG, G_STO_YCRAF, SUBTECHGROUPKPOT, X_CAP_YCR, X_FLOW_YCR, EL_DEMAND_YCR
 * ,ECO_G_YCRAG,ECO_X_YCR,OBJ_YCR,EL_PRICE_YCR,EL_PRICE_YCRST,PRO_YCRAGFST,EL_DEMAND_YCRST,EL_DEMAND_YCR, H_DEMAND_YCRAST,H_DEMAND_YCRA,H_PRICE_YCRAST,H_PRICE_YCRA,G_STO_YCRAF,X_FLOW_YCRST,F_CONS_YCRAST,F_CONS_YCRA,EMI_YCRAG, EL_BALANCE_YCRST,CURT_YCRAGFST,CURT_YCRAGF,H_BALANCE_YCRAST
 
 * $ifi %HEATTRANS%==yes ,XH_CAP_YCA,XH_FLOW_YCAST,XH_FLOW_YCA,ECO_XH_YCRA
-$ifi %HYDROGEN%==yes  ,XH2_CAP_YCR, XH2_FLOW_YCR 
+$ifi %HYDROGEN%==yes  ,XH2_CAP_YCR, XH2_FLOW_YCR,H2_DEMAND_YCR 
 * ,H2_PRICE_YCRST,H2_PRICE_YCR,BIOMETH_PRICE_YST, XH2_FLOW_YCRST,ECO_XH2_YCR,H2_DEMAND_YCRST,H2_DEMAND_YCR
 ;
 
