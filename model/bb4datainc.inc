@@ -148,7 +148,7 @@ $if     EXIST '../data/FDATASET.inc' $INCLUDE      '../data/FDATASET.inc';
 $if not EXIST '../data/FDATASET.inc' $INCLUDE '../../base/data/FDATASET.inc';
 %semislash%;
 
-PARAMETER FDATA(TYPES,FDATASET)    "Fuel specific values" %semislash%
+PARAMETER FDATA(FFF,FDATASET)    "Fuel specific values" %semislash%
 $if     EXIST '../data/FDATA.inc' $INCLUDE      '../data/FDATA.inc';
 $if not EXIST '../data/FDATA.inc' $INCLUDE '../../base/data/FDATA.inc';
 %semislash%;
@@ -873,6 +873,11 @@ SET XES "Intervals of piecewise linear functions for modelling economy of scale"
 $if     EXIST '../data/XES.inc' $INCLUDE         '../data/XES.inc';
 $if not EXIST '../data/XES.inc' $INCLUDE '../../base/data/XES.inc';
 %semislash%;
+
+PARAMETER GKNMIN(AAA,GGG) "Minimum capacity restricted by geography (MW)"   %semislash%
+$if     EXIST '../data/GKNMIN.inc' $INCLUDE         '../data/GKNMIN.inc';
+%semislash%;
+*---------------
 
 *-------------------------------------------------------------------------------
 *----- Any declarations and definitions of parameters:

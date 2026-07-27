@@ -1,3 +1,6 @@
+$ifi not exist "../scenario_data/simex/simex_%id%"            execute 'mkdir -p "../scenario_data/simex/simex_%id%"';
+$setglobal simex_path "../scenario_data/simex/simex_%id%";
+$setglobal simex_path2 "../Balmorel_GSA_FY_ARRAY/scenario_data/simex/simex_%id%";
 *-----Condition on the id of the run different of baseline ---------------------
 $ifi %id%==baseline $goto nobaseline
 
@@ -30,6 +33,10 @@ for set in set_list :
     scenario_data[set] = set_data
 
 parameters.update_input(scenario_data, sample)
+
+with pd.ExcelWriter(f"../scenario_data/input_data/input_data_scenario_{id_value}.xlsx") as writer:
+    for key, df in scenario_data.items():
+        df.to_excel(writer, sheet_name=key, index=False)
 
 for set in set_list :
     # Transform the data of the dataframe into a list of tuples
