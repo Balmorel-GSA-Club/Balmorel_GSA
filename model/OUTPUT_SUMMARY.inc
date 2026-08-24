@@ -458,12 +458,12 @@ EL_DEMAND_YCRST(Y,C,IR,S,T,'ENDO_INTERSTO','MWh')$CCCRRR(C,IR)=
 
 $ifi not %EV%==yes $goto NO_EV
 EL_DEMAND_YCRST(Y,C,IR,S,T,'ENDO_EV','MWh')$CCCRRR(C,IR)=
-                                + VEV_VG2V_BEV.L(Y,IR,S,T)
-                                + VEV_VG2V_PHEV.L(Y,IR,S,T)
-$ifi %V2G%==yes                 - VEV_VV2G_BEV.L(Y,IR,S,T)
-$ifi %V2G%==yes                 - VEV_VV2G_PHEV.L(Y,IR,S,T)
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_BEV.L(Y,IR,S,T)$(cs('v2g',IY411))
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_PHEV.L(Y,IR,S,T)$(cs('v2g',IY411))
+                                + VEV_G2V_BEV.L(Y,IR,S,T)
+                                + VEV_G2V_PHEV.L(Y,IR,S,T)
+$ifi %V2G%==yes                 - VEV_V2G_BEV.L(Y,IR,S,T)
+$ifi %V2G%==yes                 - VEV_V2G_PHEV.L(Y,IR,S,T)
+$ifi %STEPCHARGSCHEME%==yes     - VEV_V2G_BEV.L(Y,IR,S,T)$(cs('v2g',IY411))
+$ifi %STEPCHARGSCHEME%==yes     - VEV_V2G_PHEV.L(Y,IR,S,T)$(cs('v2g',IY411))
 ;
 $label NO_EV
 
@@ -506,14 +506,14 @@ $ifi     %stointers%==all +SUM(IA$RRRAAA(IR,IA),SUM(IGESTO$IAGK_HASORPOT(Y,IA,IG
 * EVs
 $ifi not %EV%==yes $goto NO_EV2
                                +(
-                                + VEV_VG2V_BEV.L(Y,IR,S,T)
-                                + VEV_VG2V_PHEV.L(Y,IR,S,T)
+                                + VEV_G2V_BEV.L(Y,IR,S,T)
+                                + VEV_G2V_PHEV.L(Y,IR,S,T)
                                 )*EV_DISTLOSSLOAD(IR)/(1-EV_DISTLOSSLOAD(IR))
                                 +(
-$ifi %V2G%==yes                 - VEV_VV2G_BEV.L(Y,IR,S,T)
-$ifi %V2G%==yes                 - VEV_VV2G_PHEV.L(Y,IR,S,T)
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_BEV.L(Y,IR,S,T)$(cs('v2g',IY411))
-$ifi %STEPCHARGSCHEME%==yes     - VEV_VV2G_PHEV.L(Y,IR,S,T)$(cs('v2g',IY411))
+$ifi %V2G%==yes                 - VEV_V2G_BEV.L(Y,IR,S,T)
+$ifi %V2G%==yes                 - VEV_V2G_PHEV.L(Y,IR,S,T)
+$ifi %STEPCHARGSCHEME%==yes     - VEV_V2G_BEV.L(Y,IR,S,T)$(cs('v2g',IY411))
+$ifi %STEPCHARGSCHEME%==yes     - VEV_V2G_PHEV.L(Y,IR,S,T)$(cs('v2g',IY411))
                                 +0)*EV_DISTLOSSUNLOAD(IR)/(1-EV_DISTLOSSUNLOAD(IR))
 $label NO_EV2
 *CCS
