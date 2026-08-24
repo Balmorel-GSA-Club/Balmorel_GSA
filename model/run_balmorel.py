@@ -15,7 +15,7 @@ def get_arg():
     parser = argparse.ArgumentParser(description="Process some arguments.")
     parser.add_argument('--nb_scen', default=1, type=int, help='Number of scenarios (integer)')
     parser.add_argument('--input_sample', default="input_params.csv", type=str, help='Name of the input sampling csv file (str)')
-    parser.add_argument('--nb_cores', default=2, type=int, help='Number of cores (integer)')
+    parser.add_argument('--nb_cores', default=3, type=int, help='Number of cores (integer)')
     args = parser.parse_args()
     return args.nb_scen, args.input_sample, args.nb_cores
 
